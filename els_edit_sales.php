@@ -2,31 +2,69 @@
 session_start();
 include('assets/inc/config.php');
 
-if (isset($_POST['edit_sale'])) {
-    // Retrieve the data from the form
-    $sale_id = $_POST['sale_id'];
-    $cust_name = $_POST['cust_name'];
-    $cust_phone = $_POST['cust_phone'];
-    $cust_address = $_POST['cust_address'];
-    $total_amount = $_POST['total_amount'];
+if (isset($_POST['add_sale'])) {
+    // Fetch and sanitize input
+    $provided_customer_id = isset($_POST['customer_id']) ? intval($_POST['customer_id']) : 0;
+    $cust_name      = trim($_POST['cust_name']);
+    $cust_phone     = trim($_POST['cust_phone']);
+    $cust_address   = trim($_POST['cust_address']);
+    $total_amount   = floatval($_POST['total_amount']);
 
-    // Update query
-    $update_query = "UPDATE sales SET customer_name = ?, phone = ?, address = ?, total_amount = ? WHERE id = ?";
+    $customer_id = null;
 
-    // Prepare and bind the query
-    $stmt = $mysqli->prepare($update_query);
-    $stmt->bind_param("sssdi", $cust_name, $cust_phone, $cust_address, $total_amount, $sale_id);
-
-    // Execute the query
-    if ($stmt->execute()) {
-        $success_message = "Sale updated successfully.";
-    } else {
-        $error_message = "Error updating sale: " . $stmt->error;
+    // Case 1: Use provided customer_id directly (only if it exists in DB)
+    if ($provided_customer_id > 0) {
+        $check_query = "SELECT id FROM customers WHERE id = ? LIMIT 1";
+        $stmt = $mysqli->prepare($check_query);
+        $stmt->bind_param("i", $provided_customer_id);
+        $stmt->execute();
+        $stmt->bind_result($existing_id);
+        if ($stmt->fetch()) {
+            $customer_id = $existing_id;
+        }
+        $stmt->close();
     }
 
-    // Close the statement
+    // Case 2: Lookup customer by name/phone
+    if (!$customer_id) {
+        $check_query = "SELECT id FROM customers WHERE name = ? AND phone = ? LIMIT 1";
+        $stmt = $mysqli->prepare($check_query);
+        $stmt->bind_param("ss", $cust_name, $cust_phone);
+        $stmt->execute();
+        $stmt->bind_result($existing_id);
+        if ($stmt->fetch()) {
+            $customer_id = $existing_id;
+        }
+        $stmt->close();
+    }
+
+    // Case 3: Insert new customer if not found
+    if (!$customer_id) {
+        $insert_customer = "INSERT INTO customers (name, phone, address) VALUES (?, ?, ?)";
+        $stmt = $mysqli->prepare($insert_customer);
+        $stmt->bind_param("sss", $cust_name, $cust_phone, $cust_address);
+        if ($stmt->execute()) {
+            $customer_id = $stmt->insert_id;
+        } else {
+            $err = "❌ Customer insert failed: " . $stmt->error;
+            $stmt->close();
+            return;
+        }
+        $stmt->close();
+    }
+
+    // Insert into sales
+    $insert_sale = "INSERT INTO sales (customer_id, total_amount) VALUES (?, ?)";
+    $stmt = $mysqli->prepare($insert_sale);
+    $stmt->bind_param("id", $customer_id, $total_amount);  // int, double
+    if ($stmt->execute()) {
+        $success = "✅ Sale recorded successfully!";
+    } else {
+        $err = "❌ Sale insert failed: " . $stmt->error;
+    }
     $stmt->close();
 }
+
 
 ?>
 <!--End Server Side-->

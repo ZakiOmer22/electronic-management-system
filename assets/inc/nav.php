@@ -1,12 +1,15 @@
 <?php
+include('assets/inc/config.php'); // Include configuration file
+
 $doc_id = $_SESSION['doc_id'];
-$doc_number = $_SESSION['doc_number'];
-$ret = "SELECT * FROM  his_docs WHERE doc_id = ? AND doc_number = ?";
+$username = $_SESSION['username']; // Use 'username' instead of 'doc_number'
+
+$ret = "SELECT * FROM users WHERE id = ? AND username = ?";
 $stmt = $mysqli->prepare($ret);
-$stmt->bind_param('is', $doc_id, $doc_number);
-$stmt->execute(); //ok
+$stmt->bind_param('is', $doc_id, $username); // Bind parameters: id and username
+$stmt->execute(); // Execute the statement
 $res = $stmt->get_result();
-//$cnt=1;
+
 while ($row = $res->fetch_object()) {
 ?>
     <div class="navbar-custom">
@@ -27,45 +30,31 @@ while ($row = $res->fetch_object()) {
                 </form>
             </li>
 
-
             <li class="dropdown notification-list">
                 <a class="nav-link dropdown-toggle nav-user mr-0 waves-effect waves-light" data-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
-                    <img src="assets/images/users/<?php echo $row->doc_dpic; ?>" alt="dpic" class="rounded-circle">
+                    <img src="assets/images/users/<?php echo $row->profile_photo; ?>" alt="pic" class="rounded-circle"> <!-- Updated to use profile_photo -->
                     <span class="pro-user-name ml-1">
-                        <?php echo $row->doc_fname; ?> <?php echo $row->doc_lname; ?> <i class="mdi mdi-chevron-down"></i>
+                        <?php echo $row->firstname; ?> <?php echo $row->lastname; ?> <i class="mdi mdi-chevron-down"></i>
                     </span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right profile-dropdown ">
-                    <!-- item-->
                     <div class="dropdown-header noti-title">
-                        <h6 class="text-overflow m-0">Welcome !</h6>
+                        <h6 class="text-overflow m-0">Welcome!</h6>
                     </div>
 
-                    <!-- item-->
-                    <!-- <a href="his_doc_account.php" class="dropdown-item notify-item">
-                        <i class="fas fa-user"></i>
-                        <span>My Account</span>
-                    </a> -->
-
-                    <a href="his_doc_update-account.php" class="dropdown-item notify-item">
+                    <a href="update-account.php" class="dropdown-item notify-item">
                         <i class="fas fa-user-tag"></i>
                         <span>Update Account</span>
                     </a>
 
-
                     <div class="dropdown-divider"></div>
 
-                    <!-- item-->
-                    <a href="his_doc_logout_partial.php" class="dropdown-item notify-item">
+                    <a href="logout.php" class="dropdown-item notify-item">
                         <i class="fe-log-out"></i>
                         <span>Logout</span>
                     </a>
-
                 </div>
             </li>
-
-
-
         </ul>
 
         <!-- LOGO -->
@@ -73,10 +62,8 @@ while ($row = $res->fetch_object()) {
             <a href="his_admin_dashboard.php" class="logo text-center">
                 <span class="logo-lg">
                     <img src="assets/images/logo-light.png" alt="" height="18">
-                    <!-- <span class="logo-lg-text-light">UBold</span> -->
                 </span>
                 <span class="logo-sm">
-                    <!-- <span class="logo-sm-text-dark">U</span> -->
                     <img src="assets/images/logo-sm-white.png" alt="" height="24">
                 </span>
             </a>
@@ -95,31 +82,21 @@ while ($row = $res->fetch_object()) {
                     <i class="mdi mdi-chevron-down"></i>
                 </a>
                 <div class="dropdown-menu">
-
-
-                    <!-- item-->
                     <a href="his_doc_register_patient.php" class="dropdown-item">
                         <i class="fe-activity mr-1"></i>
                         <span>Customers</span>
                     </a>
-                    <!-- item-->
                     <a href="his_doc_lab_report.php" class="dropdown-item">
                         <i class="fe-hard-drive mr-1"></i>
                         <span>Employee</span>
                     </a>
-                    <!-- item-->
                     <a href="his_doc_register_patient.php" class="dropdown-item">
                         <i class="fe-activity mr-1"></i>
                         <span>Sales</span>
                     </a>
-
-                    
                     <div class="dropdown-divider"></div>
-
-
                 </div>
             </li>
-
         </ul>
     </div>
 <?php } ?>

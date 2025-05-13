@@ -78,15 +78,14 @@ $doc_id = $_SESSION['doc_id'];
                                         <img src="assets/images/logo-dark.png" alt="" height="20">
                                     </div>
                                     <div class="float-right">
-                                        <h4 class="m-0 d-print-none"><?php echo safe_html($customer->full_name); ?>'s Report</h4>
+                                        <h4 class="m-0 d-print-none"><?php echo safe_html($customer->name); ?>'s Report</h4>
                                     </div>
                                 </div>
 
                                 <div class="row mt-3">
                                     <div class="col-md-6">
                                         <div class="mt-3">
-                                            <p><strong>Full Name:</strong> <?php echo safe_html($customer->full_name); ?></p>
-                                            <p><strong>Email:</strong> <?php echo safe_html($customer->email); ?></p>
+                                            <p><strong>Full Name:</strong> <?php echo safe_html($customer->name); ?></p>
                                             <p><strong>Phone:</strong> <?php echo safe_html($customer->phone); ?></p>
                                         </div>
                                     </div>
@@ -115,12 +114,7 @@ $doc_id = $_SESSION['doc_id'];
                                                     <tr>
                                                         <td>1</td>
                                                         <td>Full Name</td>
-                                                        <td><?php echo safe_html($customer->full_name); ?></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>2</td>
-                                                        <td>Email</td>
-                                                        <td><?php echo safe_html($customer->email); ?></td>
+                                                        <td><?php echo safe_html($customer->name); ?></td>
                                                     </tr>
                                                     <tr>
                                                         <td>3</td>

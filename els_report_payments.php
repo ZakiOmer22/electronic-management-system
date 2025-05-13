@@ -108,7 +108,7 @@ while ($row = $details_result->fetch_object()) {
                                         <div class="mt-3">
                                             <p><strong>Customer Name:</strong> <?php echo htmlspecialchars($payment->customer_name ?? 'Walk-in'); ?></p>
                                             <p><strong>Amount Paid:</strong> $<?php echo number_format($payment->amount_paid, 2); ?></p>
-                                            <p><strong>Handled By (User ID):</strong> <?php echo intval($payment->user_id); ?></p>
+                                            <p><strong>Handled By (User ID):</strong> <?php echo intval($payment->id); ?></p>
                                         </div>
                                     </div>
 

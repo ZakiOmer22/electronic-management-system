@@ -26,6 +26,27 @@ $doc_id = $_SESSION['doc_id'];
             }
     }
     */
+// Check if a delete request has been made
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
+    $delete_id = intval($_POST['delete_id']);
+
+    // SQL query to delete the customer
+    $query = "DELETE FROM customers WHERE id = ?";
+    $stmt = $mysqli->prepare($query);
+    $stmt->bind_param('i', $delete_id);
+
+    if ($stmt->execute()) {
+        $success = "Customer deleted successfully!";
+    } else {
+        $err = "Error deleting customer: " . $stmt->error;
+    }
+
+    $stmt->close();
+}
+
+// Fetch customers to display (make sure this is after the deletion logic)
+$customer_query = "SELECT id, name FROM customers";
+$customer_result = $mysqli->query($customer_query);
 ?>
 
 <!DOCTYPE html>
@@ -38,6 +59,26 @@ $doc_id = $_SESSION['doc_id'];
     <!-- Begin page -->
     <div id="wrapper">
 
+        <script>
+            function confirmDelete(id) {
+                if (confirm('Are you sure you want to delete this customer?')) {
+                    // Create a form and submit it
+                    var form = document.createElement('form');
+                    form.method = 'POST';
+
+                    // Add the delete ID to the form
+                    var input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'delete_id';
+                    input.value = id;
+                    form.appendChild(input);
+
+                    // Append the form to the body and submit
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            }
+        </script>
         <!-- Topbar Start -->
         <?php include('assets/inc/nav.php'); ?>
         <!-- end Topbar -->
@@ -131,7 +172,8 @@ $doc_id = $_SESSION['doc_id'];
                                                         <a href="els_edit_customers.php?id=<?php echo $row->id; ?>" class="badge badge-primary">
                                                             <i class="mdi mdi-pencil"></i> Edit
                                                         </a>
-                                                        <a href="delete_customer.php?id=<?php echo $row->id; ?>" class="badge badge-danger">
+                                                        <a href="#" class="badge badge-danger"
+                                                            onclick="confirmDelete(<?php echo $row->id; ?>); return false;">
                                                             <i class="mdi mdi-trash-can-outline"></i> Delete
                                                         </a>
                                                         <!-- Report Button -->

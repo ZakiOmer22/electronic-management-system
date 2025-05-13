@@ -1,9 +1,9 @@
 <?php
 session_start();
 include('assets/inc/config.php');
-$success = $err = "";
+
 if (isset($_POST['add_product'])) {
-    // Capture form inputs
+    // Fetch and sanitize input
     $prod_name        = trim($_POST['prod_name']);
     $prod_category    = intval($_POST['prod_category']);
     $prod_price       = floatval($_POST['prod_price']);
@@ -14,19 +14,16 @@ if (isset($_POST['add_product'])) {
     $upload_dir = 'assets/uploads/';
     $prod_image = null;
 
-    // Make sure directory exists
     if (!is_dir($upload_dir)) {
         mkdir($upload_dir, 0777, true);
     }
 
-    // Handle uploaded image
     if (isset($_FILES['prod_image']) && $_FILES['prod_image']['error'] === 0) {
         $image_tmp  = $_FILES['prod_image']['tmp_name'];
         $image_name = basename($_FILES['prod_image']['name']);
         $ext        = strtolower(pathinfo($image_name, PATHINFO_EXTENSION));
-
-        // Validate file type
         $allowed_ext = ['jpg', 'jpeg', 'png', 'gif'];
+
         if (in_array($ext, $allowed_ext)) {
             $new_filename = uniqid('prod_', true) . '.' . $ext;
             $target_path = $upload_dir . $new_filename;
@@ -34,30 +31,31 @@ if (isset($_POST['add_product'])) {
             if (move_uploaded_file($image_tmp, $target_path)) {
                 $prod_image = $new_filename;
             } else {
-                $err = "Image upload failed. Could not move file.";
+                $err = "❌ Image upload failed.";
             }
         } else {
-            $err = "Invalid image file type.";
+            $err = "❌ Invalid image format.";
         }
     }
 
-    // If no error so far, proceed with DB insert
-    if (!$err) {
-        $query = "INSERT INTO products (category_id, name, description, price, stock_quantity, image)
-                  VALUES (?, ?, ?, ?, ?, ?)";
+    // Only insert if there's no error
+    if (!isset($err) || $err === "") {
+        $insert_product = "INSERT INTO products (category_id, name, description, price, stock_quantity, image)
+                           VALUES (?, ?, ?, ?, ?, ?)";
+        $stmt = $mysqli->prepare($insert_product);
+        $stmt->bind_param("issdis", $prod_category, $prod_name, $prod_description, $prod_price, $prod_stock, $prod_image);
 
-        if ($stmt = $mysqli->prepare($query)) {
-            $stmt->bind_param('issdis', $prod_category, $prod_name, $prod_description, $prod_price, $prod_stock, $prod_image);
-            if ($stmt->execute()) {
-                $success = "✅ Product added successfully!";
-            } else {
-                $err = "Database error: " . $stmt->error;
-            }
+        if ($stmt->execute()) {
+            $success = "✅ Product added successfully!";
         } else {
-            $err = "SQL prepare failed: " . $mysqli->error;
+            $err = "❌ Product insert failed: " . $stmt->error;
         }
+
+        $stmt->close();
     }
 }
+
+
 ?>
 <!--End Server Side-->
 <!--End Patient Registration-->

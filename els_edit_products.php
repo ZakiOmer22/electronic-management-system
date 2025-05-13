@@ -95,6 +95,11 @@ if (isset($_POST['edit_product'])) {
                                     <form method="post" enctype="multipart/form-data">
                                         <div class="form-row">
                                             <div class="form-group col-md-6">
+                                                <label for="inputProductID" class="col-form-label">Product ID</label>
+                                                <input type="text" name="product_id_display" class="form-control" id="inputProductID"
+                                                    value="<?php echo isset($product['id']) ? $product['id'] : ''; ?>" placeholder="Product Id">
+                                            </div>
+                                            <div class="form-group col-md-6">
                                                 <label for="inputProductName" class="col-form-label">Product Name</label>
                                                 <input type="text" required="required" name="prod_name" class="form-control" id="inputProductName" placeholder="Product Name" value="<?php echo isset($product['name']) ? $product['name'] : ''; ?>">
                                             </div>
@@ -136,7 +141,7 @@ if (isset($_POST['edit_product'])) {
                                             <input type="file" name="prod_image" class="form-control" id="inputProductImage">
                                             <?php if (isset($product['image']) && $product['image'] != ''): ?>
                                                 <div class="mt-2">
-                                                    <img src="uploads/<?php echo $product['image']; ?>" alt="Product Image" width="100">
+                                                    <img src="pages/uploads/<?php echo $product['image']; ?>" alt="Product Image" width="100">
                                                 </div>
                                             <?php endif; ?>
                                         </div>

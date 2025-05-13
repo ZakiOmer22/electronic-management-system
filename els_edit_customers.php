@@ -102,7 +102,7 @@ if (isset($_POST['edit_customer'])) {
                                         <div class="form-row">
                                             <div class="form-group col-md-4">
                                                 <label for="inputCustomerID" class="col-form-label">Customer ID</label>
-                                                <input type="text" class="form-control" id="inputCustomerID" value="<?php echo isset($customer['id']) ? $customer['id'] : ''; ?>" readonly>
+                                                <input type="text" class="form-control" id="inputCustomerID" value="<?php echo isset($customer['id']) ? $customer['id'] : ''; ?>">
                                             </div>
                                             <div class="form-group col-md-8">
                                                 <label for="inputCustomerName" class="col-form-label">Customer Name</label>

@@ -98,7 +98,7 @@ if (isset($_POST['edit_category'])) {
                                         <div class="form-row">
                                             <div class="form-group col-md-4">
                                                 <label for="inputCategoryID" class="col-form-label">Category ID</label>
-                                                <input type="text" class="form-control" id="inputCategoryID" value="<?php echo isset($category['id']) ? $category['id'] : ''; ?>" readonly>
+                                                <input type="text" class="form-control" id="inputCategoryID" value="<?php echo isset($category['id']) ? $category['id'] : ''; ?>">
                                             </div>
                                             <div class="form-group col-md-8">
                                                 <label for="inputCategoryName" class="col-form-label">Category Name</label>

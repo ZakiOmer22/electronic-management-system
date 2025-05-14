@@ -5,27 +5,6 @@ include('assets/inc/checklogin.php');
 check_login();
 //$aid=$_SESSION['ad_id'];
 $doc_id = $_SESSION['doc_id'];
-/*
-  Doctor has no previledges to delete a patient record
-  if(isset($_GET['delete']))
-  {
-        $id=intval($_GET['delete']);
-        $adn="delete from his_patients where pat_id=?";
-        $stmt= $mysqli->prepare($adn);
-        $stmt->bind_param('i',$id);
-        $stmt->execute();
-        $stmt->close();	 
-  
-          if($stmt)
-          {
-            $success = "Patients Records Deleted";
-          }
-            else
-            {
-                $err = "Try Again Later";
-            }
-    }
-    */
 // Check if a delete request has been made
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
     $delete_id = intval($_POST['delete_id']);
@@ -156,10 +135,10 @@ $sale_item_result = $mysqli->query($sale_item_query);
                                         </thead>
                                         <?php
                                         // Get details of all sales items along with product info
-                                        $ret = "SELECT sales_items.id, sales_items.sale_id, sales_items.quantity, sales_items.price, products.name as product_name 
-                FROM sales_items 
-                INNER JOIN products ON sales_items.product_id = products.id 
-                ORDER BY sales_items.id DESC";
+                                        $ret = "SELECT sale_items.id, sale_items.sale_id, sale_items.quantity, sale_items.price, products.name as product_name 
+                FROM sale_items 
+                INNER JOIN products ON sale_items.product_id = products.id 
+                ORDER BY sale_items.id DESC";
                                         $stmt = $mysqli->prepare($ret);
                                         $stmt->execute();
                                         $res = $stmt->get_result();
@@ -177,10 +156,7 @@ $sale_item_result = $mysqli->query($sale_item_query);
                                                     <td><?php echo number_format($total, 2); ?></td>
                                                     <td>
                                                         <!-- Action Buttons -->
-                                                        <a href="els_view_sale_items.php?id=<?php echo $row->id; ?>" class="badge badge-success">
-                                                            <i class="mdi mdi-eye"></i> View
-                                                        </a>
-                                                        <a href="els_edit_sale_items.php?id=<?php echo $row->id; ?>" class="badge badge-primary">
+                                                        <a href="els_edit_sales_items.php?id=<?php echo $row->id; ?>" class="badge badge-primary">
                                                             <i class="mdi mdi-pencil"></i> Edit
                                                         </a>
                                                         <a href="#" class="badge badge-danger"

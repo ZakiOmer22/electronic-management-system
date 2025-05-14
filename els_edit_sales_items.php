@@ -1,16 +1,13 @@
 <?php
 session_start();
 include('assets/inc/config.php');
-
 if (isset($_POST['edit_sale_item'])) {
-    // Retrieve form data
     $sale_item_id = $_POST['sale_item_id'];
-    $sale_id = $_POST['sale_id'];  // The Sale ID (usually associated with a sale)
+    $sale_id = $_POST['sale_id'];
     $product_id = $_POST['product_id'];
     $quantity = $_POST['quantity'];
     $price = $_POST['price'];
 
-    // Update the sale item in the database
     $update_query = "UPDATE sale_items SET sale_id = ?, product_id = ?, quantity = ?, price = ? WHERE id = ?";
     $stmt = $mysqli->prepare($update_query);
     $stmt->bind_param("iiidi", $sale_id, $product_id, $quantity, $price, $sale_item_id);
@@ -23,8 +20,6 @@ if (isset($_POST['edit_sale_item'])) {
 
     $stmt->close();
 }
-
-
 ?>
 <!--End Server Side-->
 <!--End Patient Registration-->
@@ -73,53 +68,45 @@ if (isset($_POST['edit_sale_item'])) {
                         </div>
                     </div>
                     <!-- end page title -->
-                    <!-- Form row -->
+                    <!-- Form Row -->
                     <div class="row">
                         <div class="col-12">
                             <div class="card">
                                 <div class="card-body">
                                     <h4 class="header-title">Edit Sale Item</h4>
-                                    <!-- Edit Sale Item Form -->
                                     <form method="post">
                                         <div class="form-row">
-                                            <div class="form-group col-md-12">
-                                                <label for="inputSaleId" class="col-form-label">Sale ID</label>
-                                                <input type="number" required="required" name="sale_id" class="form-control" id="inputSaleId" placeholder="Sale ID" value="<?php echo isset($sale_item['sale_id']) ? $sale_item['sale_id'] : ''; ?>" readonly>
+                                            <div class="form-group col-md-4">
+                                                <label for="inputSaleItemID">Sale Item ID</label>
+                                                <input type="number" name="sale_item_id" class="form-control" id="inputSaleItemID" placeholder="Sale Item ID" required>
+                                            </div>
+                                            <div class="form-group col-md-4">
+                                                <label for="inputSaleID">Sale ID</label>
+                                                <input type="number" name="sale_id" class="form-control" id="inputSaleID" placeholder="Sale ID" required>
+                                            </div>
+                                            <div class="form-group col-md-4">
+                                                <label for="inputProductID">Product ID</label>
+                                                <input type="number" name="product_id" class="form-control" id="inputProductID" placeholder="Product ID" required>
                                             </div>
                                         </div>
 
                                         <div class="form-row">
                                             <div class="form-group col-md-6">
-                                                <label for="inputProductId" class="col-form-label">Product ID</label>
-                                                <input type="number" required="required" name="product_id" class="form-control" id="inputProductId" placeholder="Product ID" value="<?php echo isset($sale_item['product_id']) ? $sale_item['product_id'] : ''; ?>">
+                                                <label for="inputQuantity">Quantity</label>
+                                                <input type="number" name="quantity" class="form-control" id="inputQuantity" placeholder="Quantity" required>
                                             </div>
                                             <div class="form-group col-md-6">
-                                                <label for="inputQuantity" class="col-form-label">Quantity</label>
-                                                <input type="number" required="required" name="quantity" class="form-control" id="inputQuantity" placeholder="Quantity" value="<?php echo isset($sale_item['quantity']) ? $sale_item['quantity'] : ''; ?>">
-                                            </div>
-                                        </div>
-
-                                        <div class="form-row">
-                                            <div class="form-group col-md-6">
-                                                <label for="inputPrice" class="col-form-label">Price</label>
-                                                <input type="number" required="required" name="price" class="form-control" id="inputPrice" placeholder="Price" value="<?php echo isset($sale_item['price']) ? $sale_item['price'] : ''; ?>" step="0.01">
+                                                <label for="inputPrice">Price</label>
+                                                <input type="number" step="0.01" name="price" class="form-control" id="inputPrice" placeholder="Price" required>
                                             </div>
                                         </div>
 
                                         <button type="submit" name="edit_sale_item" class="ladda-button btn btn-primary" data-style="expand-right">Update Sale Item</button>
-                                        <input type="hidden" name="sale_item_id" value="<?php echo isset($sale_item['id']) ? $sale_item['id'] : ''; ?>">
                                     </form>
-                                    <!-- End Sale Item Form -->
-                                </div> <!-- end card-body -->
-                            </div> <!-- end card-->
-                        </div> <!-- end col -->
+                                </div>
+                            </div>
+                        </div>
                     </div>
-
-
-
-
-
-
                     <!-- end row -->
 
                 </div> <!-- container -->

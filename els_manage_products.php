@@ -140,7 +140,7 @@ $product_result = $mysqli->query($product_query);
                                     <table id="demo-foo-filtering" class="table table-bordered toggle-circle mb-0" data-page-size="7">
                                         <thead>
                                             <tr>
-                                                <th>#</th>
+                                                <th>Product Id</th>
                                                 <th data-toggle="true">Product Name</th>
                                                 <th data-hide="phone">Category</th>
                                                 <th data-hide="phone">Price</th>

@@ -4,8 +4,6 @@ include('assets/inc/config.php');
 include('assets/inc/checklogin.php');
 check_login();
 $doc_id = $_SESSION['doc_id'];
-$doc_number = $_SESSION['doc_number'];
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -62,7 +60,7 @@ $doc_number = $_SESSION['doc_number'];
                                         <div class="text-right">
                                             <?php
                                             //code for summing up number of out patients 
-                                            $result = "SELECT count(*) FROM his_patients  ";
+                                            $result = "SELECT count(*) FROM categories  ";
                                             $stmt = $mysqli->prepare($result);
                                             $stmt->execute();
                                             $stmt->bind_result($patient);
@@ -70,7 +68,7 @@ $doc_number = $_SESSION['doc_number'];
                                             $stmt->close();
                                             ?>
                                             <h3 class="text-dark mt-1"><span data-plugin="counterup"><?php echo $patient; ?></span></h3>
-                                            <p class="text-muted mb-1 text-truncate">Employees</p>
+                                            <p class="text-muted mb-1 text-truncate">categories</p>
                                         </div>
                                     </div>
                                 </div> <!-- end row-->
@@ -94,7 +92,7 @@ $doc_number = $_SESSION['doc_number'];
                                             /* 
                                                      * code for summing up number of assets,
                                                      */
-                                            $result = "SELECT count(*) FROM his_equipments ";
+                                            $result = "SELECT count(*) FROM products ";
                                             $stmt = $mysqli->prepare($result);
                                             $stmt->execute();
                                             $stmt->bind_result($assets);
@@ -102,7 +100,7 @@ $doc_number = $_SESSION['doc_number'];
                                             $stmt->close();
                                             ?>
                                             <h3 class="text-dark mt-1"><span data-plugin="counterup"><?php echo $assets; ?></span></h3>
-                                            <p class="text-muted mb-1 text-truncate">Customers</p>
+                                            <p class="text-muted mb-1 text-truncate">products</p>
                                         </div>
                                     </div>
                                 </div> <!-- end row-->
@@ -110,7 +108,6 @@ $doc_number = $_SESSION['doc_number'];
                         </div>
                         <!--End InPatients-->
 
-                        <!--Start Pharmaceuticals-->
                         <div class="col-md-6 col-xl-4">
                             <div class="widget-rounded-circle card-box">
                                 <div class="row">
@@ -125,7 +122,7 @@ $doc_number = $_SESSION['doc_number'];
                                             /* 
                                                      * code for summing up number of pharmaceuticals,
                                                      */
-                                            $result = "SELECT count(*) FROM his_pharmaceuticals ";
+                                            $result = "SELECT count(*) FROM payments ";
                                             $stmt = $mysqli->prepare($result);
                                             $stmt->execute();
                                             $stmt->bind_result($phar);
@@ -133,7 +130,36 @@ $doc_number = $_SESSION['doc_number'];
                                             $stmt->close();
                                             ?>
                                             <h3 class="text-dark mt-1"><span data-plugin="counterup"><?php echo $phar; ?></span></h3>
-                                            <p class="text-muted mb-1 text-truncate">Sales</p>
+                                            <p class="text-muted mb-1 text-truncate">payments</p>
+                                        </div>
+                                    </div>
+                                </div> <!-- end row-->
+                            </div> <!-- end widget-rounded-circle-->
+                        </div> <!-- end col-->
+
+                        <div class="col-md-6 col-xl-4">
+                            <div class="widget-rounded-circle card-box">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="avatar-lg rounded-circle bg-soft-danger border-danger border">
+                                            <i class="mdi mdi-pill font-22 avatar-title text-danger"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="text-right">
+                                            <?php
+                                            /* 
+                                                     * code for summing up number of pharmaceuticals,
+                                                     */
+                                            $result = "SELECT count(*) FROM customers ";
+                                            $stmt = $mysqli->prepare($result);
+                                            $stmt->execute();
+                                            $stmt->bind_result($phar);
+                                            $stmt->fetch();
+                                            $stmt->close();
+                                            ?>
+                                            <h3 class="text-dark mt-1"><span data-plugin="counterup"><?php echo $phar; ?></span></h3>
+                                            <p class="text-muted mb-1 text-truncate">customers</p>
                                         </div>
                                     </div>
                                 </div> <!-- end row-->
@@ -148,7 +174,7 @@ $doc_number = $_SESSION['doc_number'];
                         <!--Start Vendors-->
 
                         <div class="col-md-6 col-xl-6">
-                            <a href="his_doc_account.php">
+                            <a href="update-account.php">
                                 <div class="widget-rounded-circle card-box">
                                     <div class="row">
                                         <div class="col-6">
@@ -171,7 +197,7 @@ $doc_number = $_SESSION['doc_number'];
 
                         <!--Start Corporation Assets-->
                         <div class="col-md-6 col-xl-6">
-                            <a href="his_doc_view_payrolls.php">
+                            <a href="#">
                                 <div class="widget-rounded-circle card-box">
                                     <div class="row">
                                         <div class="col-6">
@@ -198,55 +224,67 @@ $doc_number = $_SESSION['doc_number'];
                     <div class="row">
                         <div class="col-xl-12">
                             <div class="card-box">
-                                <h4 class="header-title mb-3">Sales</h4>
+                                <h4 class="header-title mb-3">Lasest Sales</h4>
 
                                 <div class="table-responsive">
                                     <table class="table table-borderless table-hover table-centered m-0">
-
                                         <thead class="thead-light">
                                             <tr>
-                                                <th>id</th>
-                                                <th>customer_id</th>
-                                                <th>user_id</th>
-                                                <th>total_amount</th>
-                                                <th>sale_date</th>
+                                                <th>ID</th>
+                                                <th>Customer</th>
+                                                <th>Processed By</th>
+                                                <th>Total Amount</th>
+                                                <th>Sale Date</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
-                                        <?php
-                                        $ret = "SELECT * FROM his_patients ORDER BY RAND() LIMIT 100 ";
-                                        //sql code to get to ten docs  randomly
-                                        $stmt = $mysqli->prepare($ret);
-                                        $stmt->execute(); //ok
-                                        $res = $stmt->get_result();
-                                        $cnt = 1;
-                                        while ($row = $res->fetch_object()) {
-                                        ?>
-                                            <tbody>
-                                                <tr>
+                                        <tbody>
+                                            <?php
+                                            $ret = "
+            SELECT 
+                s.id,
+                s.total_amount,
+                s.sale_date,
+                u.firstname AS user_fname,
+                u.lastname AS user_lname,
+                c.name AS customer_name
+            FROM sales s
+            LEFT JOIN users u ON s.user_id = u.id
+            LEFT JOIN customers c ON s.customer_id = c.id
+            ORDER BY s.sale_date DESC 
+            LIMIT 100
+        ";
 
+                                            $stmt = $mysqli->prepare($ret);
+                                            $stmt->execute();
+                                            $res = $stmt->get_result();
+                                            while ($row = $res->fetch_object()) {
+                                            ?>
+                                                <tr>
+                                                    <td><?php echo $row->id; ?></td>
                                                     <td>
-                                                        <?php echo $row->pat_fname; ?> <?php echo $row->pat_lname; ?>
+                                                        <?php echo !empty($row->customer_name) ? $row->customer_name : "<i>Guest/Walk-in</i>"; ?>
                                                     </td>
                                                     <td>
-                                                        <?php echo $row->pat_addr; ?>
+                                                        <?php echo $row->user_fname . ' ' . $row->user_lname; ?>
                                                     </td>
                                                     <td>
-                                                        <?php echo $row->pat_phone; ?>
+                                                        ₱<?php echo number_format($row->total_amount, 2); ?>
                                                     </td>
                                                     <td>
-                                                        <?php echo $row->pat_type; ?>
+                                                        <?php echo date("Y-m-d H:i", strtotime($row->sale_date)); ?>
                                                     </td>
                                                     <td>
-                                                        <?php echo $row->pat_age; ?> Years
-                                                    </td>
-                                                    <td>
-                                                        <a href="his_doc_view_single_patient.php?pat_id=<?php echo $row->pat_id; ?>&&pat_number=<?php echo $row->pat_number; ?>&&pat_name=<?php echo $row->pat_fname; ?>_<?php echo $row->pat_lname; ?>" class="btn btn-xs btn-success"><i class="mdi mdi-eye"></i> View</a>
+                                                        <a href="view_sale.php?sale_id=<?php echo $row->id; ?>" class="btn btn-xs btn-info">
+                                                            <i class="mdi mdi-eye"></i> View
+                                                        </a>
                                                     </td>
                                                 </tr>
-                                            </tbody>
-                                        <?php } ?>
+                                            <?php } ?>
+                                        </tbody>
                                     </table>
+
+
                                 </div>
                             </div>
                         </div> <!-- end col -->
@@ -272,7 +310,7 @@ $doc_number = $_SESSION['doc_number'];
     <!-- END wrapper -->
 
     <!-- Right Sidebar -->
-    
+
     <!-- /Right-bar -->
 
     <!-- Right bar overlay-->
@@ -303,9 +341,9 @@ $doc_number = $_SESSION['doc_number'];
 
 
 <!-- <div class="right-bar"> -->
-        
 
-            
 
-        </div> <!-- end slimscroll-menu-->
-    </div>
+
+
+</div> <!-- end slimscroll-menu-->
+</div>

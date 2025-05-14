@@ -10,7 +10,7 @@ if (isset($_POST['add_sale_item'])) {
     $price       = floatval($_POST['price']);
 
     // Insert into sales_items table
-    $insert_sale_item = "INSERT INTO sales_items (sale_id, product_id, quantity, price) VALUES (?, ?, ?, ?)";
+    $insert_sale_item = "INSERT INTO sale_items (sale_id, product_id, quantity, price) VALUES (?, ?, ?, ?)";
     $stmt = $mysqli->prepare($insert_sale_item);
     $stmt->bind_param("iiid", $sale_id, $product_id, $quantity, $price); // Adjusted parameter types
     if ($stmt->execute()) {

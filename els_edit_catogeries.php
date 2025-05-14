@@ -2,21 +2,27 @@
 session_start();
 include('assets/inc/config.php');
 
+// Handle form submission for editing the category
 if (isset($_POST['edit_category'])) {
+    // Retrieve the category ID from the POST data
     $category_id = intval($_POST['category_id']);
     $cat_name = trim($_POST['cat_name']);
     $cat_description = trim($_POST['cat_description']);
 
+    // Initialize an array to hold any errors
     $errors = [];
 
+    // Check if category name is provided
     if (empty($cat_name)) {
         $errors[] = "Category name is required.";
     }
 
+    // Check if category description is provided
     if (empty($cat_description)) {
         $errors[] = "Category description is required.";
     }
 
+    // Check if the category name already exists (excluding the current category ID)
     $check = $mysqli->prepare("SELECT id FROM categories WHERE name = ? AND id != ?");
     $check->bind_param("si", $cat_name, $category_id);
     $check->execute();
@@ -26,20 +32,21 @@ if (isset($_POST['edit_category'])) {
     }
     $check->close();
 
+    // If there are no errors, proceed with updating the category in the database
     if (empty($errors)) {
         $update = $mysqli->prepare("UPDATE categories SET name = ?, description = ? WHERE id = ?");
         $update->bind_param("ssi", $cat_name, $cat_description, $category_id);
         if ($update->execute()) {
-            $success = "Category updated successfully.";
+            $success = "Category updated successfully.";  // Success message
         } else {
-            $err = "Database error: " . $update->error;
+            $err = "Database error: " . $update->error;  // Error message if the query fails
         }
         $update->close();
     } else {
+        // If there are errors, concatenate them into a string and display them
         $err = implode("<br>", $errors);
     }
 }
-
 ?>
 <!--End Server Side-->
 <!--End Patient Registration-->
@@ -98,26 +105,28 @@ if (isset($_POST['edit_category'])) {
                                         <div class="form-row">
                                             <div class="form-group col-md-4">
                                                 <label for="inputCategoryID" class="col-form-label">Category ID</label>
-                                                <input type="text" class="form-control" id="inputCategoryID" value="<?php echo isset($category['id']) ? $category['id'] : ''; ?>">
+                                                <input type="text" name="category_id" class="form-control" id="inputCategoryID" placeholder="Category ID" required>
                                             </div>
                                             <div class="form-group col-md-8">
                                                 <label for="inputCategoryName" class="col-form-label">Category Name</label>
-                                                <input type="text" required name="cat_name" class="form-control" id="inputCategoryName" placeholder="Category Name" value="<?php echo isset($category['name']) ? $category['name'] : ''; ?>">
+                                                <input type="text" required name="cat_name" class="form-control" id="inputCategoryName" placeholder="Category Name">
                                             </div>
                                         </div>
 
                                         <div class="form-group">
                                             <label for="inputCategoryDescription" class="col-form-label">Description</label>
-                                            <textarea required name="cat_description" class="form-control" id="inputCategoryDescription" placeholder="Category Description"><?php echo isset($category['description']) ? $category['description'] : ''; ?></textarea>
+                                            <textarea required name="cat_description" class="form-control" id="inputCategoryDescription" placeholder="Category Description"></textarea>
                                         </div>
 
-                                        <input type="hidden" name="category_id" value="<?php echo isset($category['id']) ? $category['id'] : ''; ?>">
+                                        <!-- Submit Button -->
                                         <button type="submit" name="edit_category" class="ladda-button btn btn-primary" data-style="expand-right">Update Category</button>
                                     </form>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+
 
 
 

@@ -1,9 +1,8 @@
 <?php
 session_start();
 include('assets/inc/config.php');
-
 if (isset($_POST['edit_product'])) {
-    // Retrieve form data
+    // Retrieve the product ID and form data
     $product_id = $_POST['product_id'];
     $prod_name = $_POST['prod_name'];
     $prod_category = $_POST['prod_category'];
@@ -12,31 +11,37 @@ if (isset($_POST['edit_product'])) {
     $prod_description = $_POST['prod_description'];
     $prod_image = $_FILES['prod_image'];
 
+    // Initialize image name as an empty string
+    $image_name = '';
+
     // Handle image upload (if a new image is uploaded)
     if ($prod_image['error'] == 0) {
         $image_name = time() . '_' . basename($prod_image['name']);
         $image_path = 'uploads/' . $image_name;
-        move_uploaded_file($prod_image['tmp_name'], $image_path);
+        if (move_uploaded_file($prod_image['tmp_name'], $image_path)) {
+            // Image uploaded successfully
+        } else {
+            $error_message = "Error uploading image.";
+        }
     } else {
-        // Keep the existing image if no new image is uploaded
+        // If no new image is uploaded, keep the existing image
         $image_name = isset($product['image']) ? $product['image'] : '';
     }
 
-    // Update the product in the database
+    // Prepare the query to update product in the database
     $update_query = "UPDATE products SET name = ?, category_id = ?, price = ?, stock_quantity = ?, description = ?, image = ? WHERE id = ?";
     $stmt = $mysqli->prepare($update_query);
     $stmt->bind_param("siidssi", $prod_name, $prod_category, $prod_price, $prod_stock, $prod_description, $image_name, $product_id);
 
+    // Execute the query
     if ($stmt->execute()) {
-        $success_message = "Product updated successfully.";
+        $success_message = "Product updated successfully.";  // Success message
     } else {
-        $error_message = "Error updating product: " . $stmt->error;
+        $error_message = "Error updating product: " . $stmt->error;  // Error message if the query fails
     }
 
     $stmt->close();
 }
-
-
 ?>
 <!--End Server Side-->
 <!--End Patient Registration-->
@@ -90,71 +95,58 @@ if (isset($_POST['edit_product'])) {
                         <div class="col-12">
                             <div class="card">
                                 <div class="card-body">
-                                    <h4 class="header-title">Fill all fields</h4>
-                                    <!-- Edit Product Form -->
+                                    <h4 class="header-title">Edit Product</h4>
                                     <form method="post" enctype="multipart/form-data">
                                         <div class="form-row">
-                                            <div class="form-group col-md-6">
+                                            <div class="form-group col-md-4">
                                                 <label for="inputProductID" class="col-form-label">Product ID</label>
-                                                <input type="text" name="product_id_display" class="form-control" id="inputProductID"
-                                                    value="<?php echo isset($product['id']) ? $product['id'] : ''; ?>" placeholder="Product Id">
+                                                <input type="text" name="product_id" class="form-control" id="inputProductID" placeholder="Product ID" required>
                                             </div>
-                                            <div class="form-group col-md-6">
+                                            <div class="form-group col-md-8">
                                                 <label for="inputProductName" class="col-form-label">Product Name</label>
-                                                <input type="text" required="required" name="prod_name" class="form-control" id="inputProductName" placeholder="Product Name" value="<?php echo isset($product['name']) ? $product['name'] : ''; ?>">
-                                            </div>
-                                            <div class="form-group col-md-6">
-                                                <label for="inputProductCategory" class="col-form-label">Category</label>
-                                                <select id="inputProductCategory" required="required" name="prod_category" class="form-control">
-                                                    <option>Choose Category</option>
-                                                    <?php
-                                                    // Get categories for the product selection
-                                                    $category_query = "SELECT id, name FROM categories ORDER BY name";
-                                                    $category_result = $mysqli->query($category_query);
-                                                    while ($category = $category_result->fetch_assoc()) {
-                                                        $selected = isset($product['category_id']) && $product['category_id'] == $category['id'] ? 'selected' : '';
-                                                        echo "<option value='{$category['id']}' $selected>{$category['name']}</option>";
-                                                    }
-                                                    ?>
-                                                </select>
+                                                <input type="text" name="prod_name" class="form-control" id="inputProductName" placeholder="Product Name" required>
                                             </div>
                                         </div>
 
                                         <div class="form-row">
                                             <div class="form-group col-md-6">
-                                                <label for="inputProductPrice" class="col-form-label">Price</label>
-                                                <input type="number" required="required" name="prod_price" class="form-control" id="inputProductPrice" placeholder="Product Price" step="0.01" value="<?php echo isset($product['price']) ? $product['price'] : ''; ?>">
+                                                <label for="inputCategory" class="col-form-label">Category</label>
+                                                <select name="prod_category" class="form-control" id="inputCategory" required>
+                                                    <!-- You can dynamically populate the categories here -->
+                                                    <option value="1">Category 1</option>
+                                                    <option value="2">Category 2</option>
+                                                    <option value="3">Category 3</option>
+                                                </select>
                                             </div>
                                             <div class="form-group col-md-6">
+                                                <label for="inputProductPrice" class="col-form-label">Price</label>
+                                                <input type="number" name="prod_price" class="form-control" id="inputProductPrice" placeholder="Product Price" required step="0.01">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-row">
+                                            <div class="form-group col-md-6">
                                                 <label for="inputProductStock" class="col-form-label">Stock Quantity</label>
-                                                <input type="number" required="required" name="prod_stock" class="form-control" id="inputProductStock" placeholder="Product Stock Quantity" value="<?php echo isset($product['stock_quantity']) ? $product['stock_quantity'] : ''; ?>">
+                                                <input type="number" name="prod_stock" class="form-control" id="inputProductStock" placeholder="Stock Quantity" required>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label for="inputProductImage" class="col-form-label">Product Image</label>
+                                                <input type="file" name="prod_image" class="form-control" id="inputProductImage">
                                             </div>
                                         </div>
 
                                         <div class="form-group">
                                             <label for="inputProductDescription" class="col-form-label">Description</label>
-                                            <textarea required="required" name="prod_description" class="form-control" id="inputProductDescription" placeholder="Product Description"><?php echo isset($product['description']) ? $product['description'] : ''; ?></textarea>
+                                            <textarea name="prod_description" class="form-control" id="inputProductDescription" placeholder="Product Description" required></textarea>
                                         </div>
 
-                                        <div class="form-group">
-                                            <label for="inputProductImage" class="col-form-label">Product Image</label>
-                                            <input type="file" name="prod_image" class="form-control" id="inputProductImage">
-                                            <?php if (isset($product['image']) && $product['image'] != ''): ?>
-                                                <div class="mt-2">
-                                                    <img src="pages/uploads/<?php echo $product['image']; ?>" alt="Product Image" width="100">
-                                                </div>
-                                            <?php endif; ?>
-                                        </div>
-
+                                        <!-- Submit Button -->
                                         <button type="submit" name="edit_product" class="ladda-button btn btn-primary" data-style="expand-right">Update Product</button>
-                                        <input type="hidden" name="product_id" value="<?php echo isset($product['id']) ? $product['id'] : ''; ?>">
                                     </form>
-                                    <!-- End Product Form -->
-                                </div> <!-- end card-body -->
-                            </div> <!-- end card-->
-                        </div> <!-- end col -->
+                                </div>
+                            </div>
+                        </div>
                     </div>
-
 
 
                     <!-- end row -->

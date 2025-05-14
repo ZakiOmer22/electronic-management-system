@@ -152,12 +152,6 @@ $sale_result = $mysqli->query($sale_query);
                                                     <td><?php echo $row->sale_date; ?></td>
                                                     <td>
                                                         <!-- Action Buttons -->
-                                                        <a href="els_view_sales.php?id=<?php echo $row->id; ?>" class="badge badge-success">
-                                                            <i class="mdi mdi-eye"></i> View
-                                                        </a>
-                                                        <a href="els_edit_sales.php?id=<?php echo $row->id; ?>" class="badge badge-primary">
-                                                            <i class="mdi mdi-pencil"></i> Edit
-                                                        </a>
                                                         <a href="#" class="badge badge-danger"
                                                             onclick="confirmDelete(<?php echo $row->id; ?>); return false;">
                                                             <i class="mdi mdi-trash-can-outline"></i> Delete
